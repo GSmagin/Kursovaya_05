@@ -75,10 +75,20 @@ def save_to_file_json(vacancies: list[dict], filename: str) -> None:
         f.write(vacancies_json)
 
 
+def close_database(db_name: str, params: dict) -> None:
+    conn = psycopg2.connect(dbname="postgres", **params)
+    conn.autocommit = True
+    cur = conn.cursor()
+    cur.execute(f"SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE "
+                f"datname = '{db_name}' AND leader_pid IS NULL")
+    conn.close()
+
+
+
+
 def create_database(db_name: str, params: dict) -> None:
     """
     Создает базу данных о компаниях и их вакансиях
-
     :param db_name: (str) название базы данных
     :param params: (dict) параметры подключения к базе данных
     """
@@ -97,8 +107,10 @@ def create_database(db_name: str, params: dict) -> None:
                     f"id SERIAL PRIMARY KEY NOT NULL,"
                     f"name VARCHAR(255),"
                     f"company_name VARCHAR(255),"
-                    f"salary INTEGER,"
-                    f"vacancy_url VARCHAR(255))")
+                    f"vacancy_url VARCHAR(255),"
+                    f"salary_from VARCHAR(255) NULL,"
+                    f"salary_to VARCHAR(255) NULL)"
+                    )
 
     conn.commit()
     conn.close()
@@ -117,14 +129,15 @@ def save_data_to_database(data: list[dict], db_name: str, params: dict) -> None:
         for vacancy in data:
             vacancy_name = vacancy["name"]
             company_name = vacancy["employer"]["name"]
-            salary = vacancy["salary"]["to"] if vacancy["salary"] and vacancy["salary"]["to"] else None
             vacancy_url = vacancy["alternate_url"]
+            salary_from = vacancy["salary"]["from"] if vacancy["salary"] and vacancy["salary"]["from"] else None
+            salary_to = vacancy["salary"]["to"] if vacancy["salary"] and vacancy["salary"]["to"] else None
             cur.execute(
                 """
-                INSERT INTO vacancies (name, company_name, salary, vacancy_url)
-                VALUES (%s, %s, %s, %s)
+                INSERT INTO vacancies (name, company_name, vacancy_url, salary_from, salary_to)
+                VALUES (%s, %s, %s, %s, %s)
                 """,
-                (vacancy_name, company_name, salary, vacancy_url)
+                (vacancy_name, company_name, vacancy_url, salary_from, salary_to)
             )
 
     conn.commit()

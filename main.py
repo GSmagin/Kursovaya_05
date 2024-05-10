@@ -1,7 +1,9 @@
 import requests
 
-from confing import API_HH_RU_VACANCIES, API_HH_RU_EMPLOYERS
-from src.utils import get_hh_company, save_to_file_json, get_count_pages, get_hh_data
+from confing import API_HH_RU_VACANCIES, API_HH_RU_EMPLOYERS, config
+from src.utils import (get_hh_company, save_to_file_json, get_count_pages,
+                       get_hh_data, create_database, save_data_to_database,
+                       close_database)
 
 
 def main():
@@ -23,9 +25,15 @@ def main():
     # print(company_id_list)
     # save_to_file_json(company_id_list, "company_id_list.json")
 
+
     vacancy = get_hh_data(API_HH_RU_VACANCIES, vacancies_list)
-    print(vacancy)
+    # #print(vacancy)
     save_to_file_json(vacancy, "vacancy.json")
+
+    close_database("vacancydb", config())
+
+    create_database("vacancydb", config())
+    save_data_to_database(vacancy, "vacancydb", config())
 
 
 if __name__ == "__main__":
