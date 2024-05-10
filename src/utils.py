@@ -108,8 +108,8 @@ def create_database(db_name: str, params: dict) -> None:
                     f"name VARCHAR(255),"
                     f"company_name VARCHAR(255),"
                     f"vacancy_url VARCHAR(255),"
-                    f"salary_from VARCHAR(255) NULL,"
-                    f"salary_to VARCHAR(255) NULL)"
+                    f"salary_from INTEGER NULL,"
+                    f"salary_to INTEGER NULL)"
                     )
 
     conn.commit()
