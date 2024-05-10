@@ -3,22 +3,25 @@ import requests
 import psycopg2
 
 
-def get_hh_data(api_url, company_name):
+def get_hh_company(api_url, company_name):
     # в разработке поиск компаний в hh.ru
-    """Получение данных с hh.ru
+    """Поиск компаний в hh.ru
     :param api_url: (str) публичный ключ к API
     :param company_name: (str) название компании
     :return:"""
     # api_key = 'https://api.hh.ru/employers'
     # company = 'ростелеком'
-    hh = requests.get(api_url, params={
+    company_list = requests.get(api_url, params={
         "text": company_name,
         "only_with_vacancies": 'true'
     })
+    company_list = company_list.json().get("items")
 
-    for i in hh.json().get('items'):
-        print(i['name'], i['id'], i['open_vacancies'])
-    return hh.json()
+    # vacancies_list = []
+    # for company in company_list:
+    #     vacancies_list.append(company.get("id"))
+    # return vacancies_list
+    return company_list
 
 
 def get_count_pages(api_url: str, company_id: str) -> int:
@@ -59,6 +62,7 @@ def get_hh_data(api_url: str, companies_id: list[str]) -> list[dict]:
             })
 
             vacancy.extend(hh_data.json().get('items'))
+            print(f"Получено {len(vacancy)} вакансий")
             page += 1
 
     return vacancy
