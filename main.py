@@ -3,7 +3,7 @@ import requests
 from confing import API_HH_RU_VACANCIES, API_HH_RU_EMPLOYERS, config
 from src.utils import (get_hh_company, save_to_file_json, get_count_pages,
                        get_hh_data, create_database, save_data_to_database,
-                       close_database)
+                       close_connect_database, create_tables, insert_data)
 
 
 def main():
@@ -30,10 +30,13 @@ def main():
     # #print(vacancy)
     save_to_file_json(vacancy, "vacancy.json")
 
-    close_database("vacancydb", config())
+   #close_connect_database("vacancydb", config())
 
-    create_database("vacancydb", config())
-    save_data_to_database(vacancy, "vacancydb", config())
+    create_tables("vacancydb", config())
+    insert_data(vacancy, "vacancydb", config())
+
+    #create_database("vacancydb", config())
+    #save_data_to_database(vacancy, "vacancydb", config())
 
 
 if __name__ == "__main__":
