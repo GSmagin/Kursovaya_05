@@ -1,3 +1,5 @@
+from typing import Dict
+
 from configparser import ConfigParser
 
 API_HH_RU_VACANCIES = 'https://api.hh.ru/vacancies'
@@ -18,3 +20,4 @@ def config(filename="connect_db.ini", section="postgresql"):
         raise Exception(
             'Section {0} is not found in the {1} file.'.format(section, filename))
     return db
+
