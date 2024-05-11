@@ -289,3 +289,4 @@ def insert_data(data: list[dict], db_name: str, params: dict) -> None:
             )
     conn.commit()
     conn.close()
+    print('Запись в базу данных завершена')
