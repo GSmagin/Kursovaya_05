@@ -332,3 +332,4 @@ def search_companies(api):
         selected_companies_sorted.append(company.get("id"))
     print(selected_companies_sorted)
     return selected_companies_sorted
+

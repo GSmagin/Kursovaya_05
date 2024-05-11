@@ -1,4 +1,4 @@
-from src.confing import *
+from confing import API_HH_RU_EMPLOYERS, API_HH_RU_VACANCIES, config_connectdb
 from src.utils import *
 from src.class_dbmanager import *
 
@@ -8,7 +8,7 @@ class Menu:
     def __init__(self):
         self.companies = []
         self.company_list = []
-        self.config = config()
+        self.config = config_connectdb()
 
     def show_main_menu(self):
         """Главное меню"""
@@ -41,24 +41,24 @@ class Menu:
         self.company_list = ['3127',
                              '2748',
                              '1740',
-                             '647854',
-                             '135313',
+                             '1473866',
+                             '4023',
                              '6167349',
-                             '1025602',
-                             '3537093',
-                             '102639',
+                             '3776',
+                             '15478',
+                             '916364',
                              '740'
                              ]
         print("Выбран список компаний:\n"
               "1. 'МегаФон', 'https://hh.ru/employer/3127'\n"
               "2. 'Ростелеком', 'https://hh.ru/employer/2748'\n"
               "3. 'Яндекс', 'https://hh.ru/employer/1740'\n"
-              "4. 'Al Hilal Банк', 'https://hh.ru/employer/647854'\n"
-              "5. 'Bank RBK, АО', 'https://hh.ru/employer/135313'\n"
+              "4. 'Сбербанк-Сервис', 'https://hh.ru/employer/1473866'\n"
+              "5. 'Райффайзен Банк', 'https://hh.ru/employer/4023'\n"
               "6. 'Garant Bank', 'https://hh.ru/employer/6167349'\n"
-              "7. 'SBI Bank', 'https://hh.ru/employer/1025602'\n"
-              "8. 'SQB BOSH BANK', 'https://hh.ru/employer/3537093'\n"
-              "9. 'Woori Bank', 'https://hh.ru/employer/102639'\n"
+              "7. 'МТС', 'https://hh.ru/employer/3776'\n"
+              "8. 'VK', 'https://hh.ru/employer/15478'\n"
+              "9. '585, Золотой', 'https://hh.ru/employer/916364'\n"
               "10. 'Норникель', 'https://hh.ru/employer/740'\n")
 
     def select_company_list_search(self):

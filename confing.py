@@ -1,10 +1,15 @@
+import os
 from configparser import ConfigParser
 
+
+root_gir = os.path.dirname(__file__)
 API_HH_RU_VACANCIES = 'https://api.hh.ru/vacancies'
 API_HH_RU_EMPLOYERS = 'https://api.hh.ru/employers'
+DIR_CONFIG_CONNECTDB = os.path.join(root_gir, 'connect_db.ini')
 
 
-def config(filename="connect_db.ini", section="postgresql"):
+def config_connectdb(filename=DIR_CONFIG_CONNECTDB, section="postgresql") -> dict:
+    print(filename)
     # create a parser
     parser = ConfigParser()
     # read config file
