@@ -100,18 +100,17 @@ def save_to_file_json(vacancies: list[dict], filename: str) -> None:
         f.write(vacancies_json)
 
 
-def close_connect_database(db_name: str, params: dict) -> None:
-    """Закрытие соединения с базой данных
-    :param db_name: (str) название базы данных
-    :param params: (dict) параметры подключения к базе данных
-    """
-    conn = psycopg2.connect(dbname=db_name, **params)
-    conn.close()
-    conn = psycopg2.connect(dbname="postgres", **params)
-    conn.autocommit = True
+def close_active_connections(db_name, params):
+    conn = psycopg2.connect(dbname='postgres', **params)
     cursor = conn.cursor()
-    cursor.execute(f"SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE "
-                   f"datname = '{db_name}' AND leader_pid IS NULL")
+    cursor.execute("""
+        SELECT pg_terminate_backend(pg_stat_activity.pid)
+        FROM pg_stat_activity
+        WHERE pg_stat_activity.datname = %s
+          AND pid <> pg_backend_pid();
+    """, (db_name,))
+    conn.commit()
+    cursor.close()
     conn.close()
 
 
@@ -121,15 +120,13 @@ def clear_database(db_name: str, params: dict) -> None:
     :param db_name: (str) название базы данных
     :param params: (dict) параметры подключения к базе данных
     """
-    close_connect_database(db_name, params)
+    close_active_connections(db_name, params)
 
     conn = psycopg2.connect(dbname="postgres", **params)
     conn.autocommit = True
     cursor = conn.cursor()
-
     cursor.execute(f"DROP DATABASE IF EXISTS {db_name}")
     cursor.execute(f"CREATE DATABASE {db_name}")
-
     conn.close()
 
 
@@ -330,6 +327,10 @@ def search_companies(api):
     selected_companies_sorted = []
     for company in selected_companies:
         selected_companies_sorted.append(company.get("id"))
-    print(selected_companies_sorted)
-    return selected_companies_sorted
+    if not selected_companies_sorted:
+        print("\nСписок компаний пуст. Пожалуйста, добавьте компании!!!\n")
+        return selected_companies_sorted
+    else:
+        print(selected_companies_sorted)
+        return selected_companies_sorted
 

@@ -1,6 +1,7 @@
+from src.class_dbmanager import DBManager
 from confing import API_HH_RU_EMPLOYERS, API_HH_RU_VACANCIES, config_connectdb
-from src.utils import *
-from src.class_dbmanager import *
+from src.utils import (search_companies, get_hh_data, create_tables, insert_data,
+                       clear_database)
 
 
 class Menu:
@@ -9,6 +10,7 @@ class Menu:
         self.companies = []
         self.company_list = []
         self.config = config_connectdb()
+
 
     def show_main_menu(self):
         """Главное меню"""
@@ -38,6 +40,7 @@ class Menu:
 
     def select_company_list(self):
         """Выбор списка компаний"""
+        #self.company_list = ['3127']
         self.company_list = ['3127',
                              '2748',
                              '1740',
@@ -71,16 +74,17 @@ class Menu:
         """Поиск вакансий"""
         print("Запуск поиска вакансий...")
         vacancy = get_hh_data(API_HH_RU_VACANCIES, self.company_list)
-        create_tables("vacancydb", self.config)
-        insert_data(vacancy, "vacancydb", self.config)
+        create_tables("vacancy_db", self.config)
+        insert_data(vacancy, "vacancy_db", self.config)
 
     def clear_database(self):
         """Очистка базы данных"""
         print("Очистка базы данных...")
-        clear_database("vacancydb", self.config)
+        clear_database("vacancy_db", self.config)
         print("База данных очищена")
 
     def run(self):
+        """Запуск программы"""
         while True:
             self.show_main_menu()
             choice = input("Выберите пункт: ")
@@ -107,27 +111,27 @@ class Menu:
                     search_choice = input("Выберите пункт: ")
                     if search_choice == '1':
                         print("Вы выбрали: Выводит список всех компаний и количество вакансий у каждой компании")
-                        dbmanager = DBManager("vacancydb", self.config)
+                        dbmanager = DBManager("vacancy_db", self.config)
                         dbmanager.get_companies_and_vacancies_count()
                     elif search_choice == '2':
                         print(
                             "Вы выбрали: Выводит список всех вакансий с указанием названия компании,\n"
                             " названия вакансии и зарплаты и ссылки на вакансию")
-                        dbmanager = DBManager("vacancydb", self.config)
+                        dbmanager = DBManager("vacancy_db", self.config)
                         dbmanager.get_all_vacancies()
                     elif search_choice == '3':
                         print("Вы выбрали: Выводит среднюю зарплату по вакансиям")
-                        dbmanager = DBManager("vacancydb", self.config)
+                        dbmanager = DBManager("vacancy_db", self.config)
                         dbmanager.get_avg_salary()
                     elif search_choice == '4':
                         print("Вы выбрали: Выводит список всех вакансий, у которых зарплата\n"
                               " выше средней по всем вакансиям")
-                        dbmanager = DBManager("vacancydb", self.config)
+                        dbmanager = DBManager("vacancy_db", self.config)
                         dbmanager.get_vacancies_with_higher_salary()
                     elif search_choice == '5':
                         print("Вы выбрали: Поиск вакансий по ключевому")
                         keyword = input("Введите ключевое слово поиска: ")
-                        dbmanager = DBManager("vacancydb", self.config)
+                        dbmanager = DBManager("vacancy_db", self.config)
                         dbmanager.get_vacancies_with_keyword(keyword)
                     elif search_choice == '6':
                         break

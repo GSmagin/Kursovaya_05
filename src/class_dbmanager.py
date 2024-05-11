@@ -7,10 +7,10 @@ class DBManager:
         self.conn = psycopg2.connect(dbname=db_name, **params)
         self.cur = self.conn.cursor()
 
-    # def __del__(self):
-    #     if self.conn is not None:
-    #         self.conn.close()
-    #         # print("Соединение закрыто.")
+    def close(self):
+        if self.conn is not None:
+            self.conn.close()
+            # print("Соединение закрыто.")
 
     def get_connection(self, request_text: str):
         """Получение соединения с базой данных"""

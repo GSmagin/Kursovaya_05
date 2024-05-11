@@ -5,10 +5,10 @@ from configparser import ConfigParser
 root_gir = os.path.dirname(__file__)
 API_HH_RU_VACANCIES = 'https://api.hh.ru/vacancies'
 API_HH_RU_EMPLOYERS = 'https://api.hh.ru/employers'
-DIR_CONFIG_CONNECTDB = os.path.join(root_gir, 'connect_db.ini')
+DIR_CONFIG_CONNECT = os.path.join(root_gir, 'connect_db.ini')
 
 
-def config_connectdb(filename=DIR_CONFIG_CONNECTDB, section="postgresql") -> dict:
+def config_connectdb(filename=DIR_CONFIG_CONNECT, section="postgresql"):
     print(filename)
     # create a parser
     parser = ConfigParser()
@@ -23,4 +23,6 @@ def config_connectdb(filename=DIR_CONFIG_CONNECTDB, section="postgresql") -> dic
         raise Exception(
             'Section {0} is not found in the {1} file.'.format(section, filename))
     return db
+
+
 
