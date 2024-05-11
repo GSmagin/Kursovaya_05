@@ -87,7 +87,8 @@ class DBManager:
 
         print("\nВакансии с зарплатой выше среднего\n")
         for rdb in response_database:
-            print(f"Название вакансии  - {rdb[0]};\n"
+            print(f"Название компании  - {rdb[4]};\n"
+                  f"Название вакансии  - {rdb[0]};\n"
                   f"Зарплата - {rdb[1]}.\n")
 
     def get_vacancies_with_keyword(self, keyword: str) -> None:

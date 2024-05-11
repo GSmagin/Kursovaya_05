@@ -1,5 +1,3 @@
-from typing import Dict
-
 from configparser import ConfigParser
 
 API_HH_RU_VACANCIES = 'https://api.hh.ru/vacancies'

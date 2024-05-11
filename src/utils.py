@@ -9,18 +9,12 @@ def get_hh_company(api_url, company_name):
     :param api_url: (str) публичный ключ к API
     :param company_name: (str) название компании
     :return:"""
-    # api_key = 'https://api.hh.ru/employers'
-    # company = 'ростелеком'
     company_list = requests.get(api_url, params={
         "text": company_name,
         "only_with_vacancies": 'true'
     })
     company_list = company_list.json().get("items")
 
-    # vacancies_list = []
-    # for company in company_list:
-    #     vacancies_list.append(company.get("id"))
-    # return vacancies_list
     return company_list
 
 
@@ -117,7 +111,7 @@ def close_connect_database(db_name: str, params: dict) -> None:
     conn.autocommit = True
     cursor = conn.cursor()
     cursor.execute(f"SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE "
-                f"datname = '{db_name}' AND leader_pid IS NULL")
+                   f"datname = '{db_name}' AND leader_pid IS NULL")
     conn.close()
 
 
@@ -269,24 +263,72 @@ def insert_data(data: list[dict], db_name: str, params: dict) -> None:
                 'currency) \n'
                 'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
                 (id_vacancy,
-                    id_company,
-                    name,
-                    city,
-                    street,
-                    building,
-                    published_at,
-                    created_at,
-                    apply_alternate_url,
-                    alternate_url,
-                    requirement,
-                    responsibility,
-                    schedule_name,
-                    experience_name,
-                    employment_name,
-                    salary_from,
-                    salary_to,
-                    currency)
+                 id_company,
+                 name,
+                 city,
+                 street,
+                 building,
+                 published_at,
+                 created_at,
+                 apply_alternate_url,
+                 alternate_url,
+                 requirement,
+                 responsibility,
+                 schedule_name,
+                 experience_name,
+                 employment_name,
+                 salary_from,
+                 salary_to,
+                 currency)
             )
     conn.commit()
     conn.close()
     print('Запись в базу данных завершена')
+
+
+def search_companies(api):
+    selected_companies = []
+
+    while True:
+        keyword = input("Введите название компании (для выхода введите '00'): ")
+        if keyword.lower() == '00':
+            break
+
+        companies = get_hh_company(api, keyword)
+        if not companies:
+            print("По вашему запросу ничего не найдено.")
+            continue
+
+        companies_sorted = [{"id": company.get("id"),
+                             "name": company.get("name"),
+                             "alternate_url": company.get("alternate_url")} for company in companies]
+
+        print("Найденные компании:")
+        for i, company in enumerate(companies_sorted):
+            print(f"{i + 1}. {company['name']}")
+
+        while True:
+            choice = input("Выберите номера компаний для добавления в список (разделите номера пробелом): ")
+            try:
+                choices = [int(x) for x in choice.split()]
+                for index in choices:
+                    if 1 <= index <= len(companies_sorted):
+                        selected_companies.append(companies_sorted[index - 1])
+                    else:
+                        print("Неверный номер компании. Пожалуйста, выберите снова.")
+                break
+            except ValueError:
+                print("Пожалуйста, введите допустимые номера.")
+
+        print("Выбранные компании:")
+        for i, company in enumerate(selected_companies):
+            print(f"{i + 1}. {company['name'], company['alternate_url']}")
+
+        option = input("Хотите ли запустить новый поиск? (да/нет):")
+        if option.lower() != 'да':
+            break
+    selected_companies_sorted = []
+    for company in selected_companies:
+        selected_companies_sorted.append(company.get("id"))
+    print(selected_companies_sorted)
+    return selected_companies_sorted
