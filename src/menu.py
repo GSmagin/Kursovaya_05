@@ -11,7 +11,6 @@ class Menu:
         self.company_list = []
         self.config = config_connectdb()
 
-
     def show_main_menu(self):
         """Главное меню"""
         print("Главное меню:")
@@ -40,7 +39,7 @@ class Menu:
 
     def select_company_list(self):
         """Выбор списка компаний"""
-        #self.company_list = ['3127']
+        # self.company_list = ['3127']
         self.company_list = ['3127',
                              '2748',
                              '1740',

@@ -294,7 +294,7 @@ def search_companies(api):
         companies = get_hh_company(api, keyword)
         if not companies:
             print("По вашему запросу ничего не найдено.")
-            continue
+            #continue
 
         companies_sorted = [{"id": company.get("id"),
                              "name": company.get("name"),
@@ -305,7 +305,8 @@ def search_companies(api):
             print(f"{i + 1}. {company['name']}")
 
         while True:
-            choice = input("Выберите номера компаний для добавления в список (разделите номера пробелом): ")
+            choice = input(f"Выберите номера компаний для добавления в список (разделите номера пробелом)\n"
+                           "если поиск не выдал ни одной компании нажмите Enter: ")
             try:
                 choices = [int(x) for x in choice.split()]
                 for index in choices:
@@ -331,6 +332,5 @@ def search_companies(api):
         print("\nСписок компаний пуст. Пожалуйста, добавьте компании!!!\n")
         return selected_companies_sorted
     else:
-        print(selected_companies_sorted)
         return selected_companies_sorted
 
