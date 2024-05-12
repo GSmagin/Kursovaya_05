@@ -1,7 +1,7 @@
 from src.class_dbmanager import DBManager
 from confing import API_HH_RU_EMPLOYERS, API_HH_RU_VACANCIES, config_connectdb
 from src.utils import (search_companies, get_hh_data, create_tables, insert_data,
-                       clear_database)
+                       clear_database, save_to_file_json)
 
 
 class Menu:
@@ -73,6 +73,7 @@ class Menu:
         """Поиск вакансий"""
         print("Запуск поиска вакансий...")
         vacancy = get_hh_data(API_HH_RU_VACANCIES, self.company_list)
+        save_to_file_json(vacancy, 'vacancy.json')
         create_tables("vacancy_db", self.config)
         insert_data(vacancy, "vacancy_db", self.config)
 

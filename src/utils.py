@@ -334,3 +334,80 @@ def search_companies(api):
     else:
         return selected_companies_sorted
 
+
+def get_currency():
+    url = 'https://www.cbr-xml-daily.ru/daily_json.js'
+    response = requests.get(url)
+    data = response.json()
+    data['Valute']['RUR'] = {
+        "ID": "R00000",
+        "NumCode": "000",
+        "CharCode": "RUR",
+        "Nominal": 1,
+        "Name": "Российский рубль",
+        "Value": 1.0,
+        "Previous": 1.0
+    }
+    return data
+
+
+def create_tables_currency(db_name: str, params: dict) -> None:
+    conn = psycopg2.connect(dbname=db_name, **params)
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS currency (
+                        id SERIAL PRIMARY KEY,
+                        date TIMESTAMP,
+                        char_code TEXT,
+                        valute_name TEXT,
+                        nominal INTEGER,
+                        value REAL,
+                        previous REAL
+                    )''')
+    conn.commit()
+    conn.close()
+
+
+def insert_tables_currency(data: list[dict], db_name: str, params: dict) -> None:
+    conn = psycopg2.connect(dbname=db_name, **params)
+    cursor = conn.cursor()
+
+    for valute, valute_data in data['Valute'].items():
+        cursor.execute('''INSERT INTO currency (date, 
+        char_code, 
+        valute_name, 
+        nominal, 
+        value, 
+        previous) 
+        VALUES (%s, %s, %s, %s, %s, %s)''', (
+            data['Date'],
+            valute_data['CharCode'],
+            valute_data['Name'],
+            valute_data['Nominal'],
+            valute_data['Value'],
+            valute_data['Previous']
+        ))
+
+    conn.commit()
+    conn.close()
+
+
+def convertcurrency():
+    # 1. ('ADLER GROUP DISTRIBUTION', 'https://hh.ru/employer/10466167')
+    company_id = 9140614
+    api_url = 'https://api.hh.ru/vacancies'
+    hh_data = requests.get(api_url, params={
+        "employer_id": company_id,
+        "page": 1,
+        "per_page": 100,
+        "area": 1
+    })
+    return hh_data.json()
+
+
+
+
+
+#
+#
+# print(len(convertcurrency().get("items")))
+# print(convertcurrency())
